@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GeoNature - Haouz Earthquake 2023</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+    <style>
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #121212;
+            color: #ddd;
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: rgba(18, 18, 18, 0.9);
+            z-index: 1000;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .navbar .logo img {
+            height: 40px;
+            width: auto;
+        }
+
+        .navbar .buttons {
+            display: flex;
+            gap: 20px;
+        }
+
+        .navbar .buttons a {
+            text-decoration: none;
+            font-size: 16px;
+            color: #ddd;
+            font-weight: bold;
+            padding: 10px 20px;
+            border-radius: 25px;
+            transition: color 0.3s ease, background-color 0.3s ease;
+        }
+
+        .navbar .buttons a:hover {
+            color: white;
+            background-color: #388E3C; /* Dark Green */
+        }
+
+        /* Hero Section */
+        #hero {
+            position: relative;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+        }
+
+        #hero h1 {
+            font-size: 48px;
+            margin-bottom: 10px;
+            z-index: 1;
+            text-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        #hero p {
+            font-size: 20px;
+            z-index: 1;
+            text-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            margin-bottom: 20px;
+        }
+
+        #cover-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+            filter: brightness(70%);
+        }
+
+        /* Photo Album Section */
+        #album-section {
+            background-color: #1F1F1F;
+            padding: 40px;
+            text-align: center;
+        }
+
+        #album-section h2 {
+            font-size: 36px;
+            margin-bottom: 20px;
+            color: #ddd;
+        }
+
+        .photo-album-container {
+            width: 100%;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+        }
+
+        .photo-album {
+            display: flex;
+            animation: scrollAlbum 15s linear infinite;
+        }
+
+        .photo-album img {
+            width: 300px;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-right: 15px;
+        }
+
+        @keyframes scrollAlbum {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
+        /* Footer */
+        #footer {
+            background-color: #388E3C;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <div class="navbar">
+        <div class="logo">
+            <img src="images/logo.svg" alt="GeoNature Logo">
+        </div>
+        <div class="buttons">
+            <a href="statistics.html">Statistics</a>
+            <a href="news.html">News</a>
+            <a href="how to help.html">Make a Donation</a>
+            <a href="aboutus.html">About Us</a>
+            <a href="closerview.html">closer view</a>
+
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <div id="hero">
+        <h1>Haouz Earthquake 2023</h1>
+        <p>Track the impact and access detailed geospatial data</p>
+        <img id="cover-image" src="images/haouz.png" alt="Hero Image">
+    </div>
+
+    <!-- Photo Album Section -->
+    <div id="album-section">
+        <h2>Photo Album</h2>
+        <div class="photo-album-container">
+            <div class="photo-album">
+                <img src="images/album1.jpg" alt="Photo 1">
+                <img src="images/album2.jpeg" alt="Photo 2">
+                <img src="images/album3.jpeg" alt="Photo 3">
+                <img src="images/album1.jpg" alt="Photo 4">
+                <img src="images/album2.jpeg" alt="Photo 5">
+                <img src="images/album3.jpeg" alt="Photo 6">
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div id="footer">
+        <p>Created by Caouthar Benguitoun & Imane Ounisl | Supervised by Pr. HAJJI</p>
+    </div>
+
+</body>
+</html>

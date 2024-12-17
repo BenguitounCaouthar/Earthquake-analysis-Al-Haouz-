@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News - Haouz Earthquake 2023</title>
+    <style>
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background-color: #121212;
+            color: #ddd;
+            overflow-x: hidden;
+            font-size: 16px;
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: rgba(18, 18, 18, 0.9);
+            color: #ddd;
+            z-index: 100;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .navbar .logo img {
+            height: 40px;
+            width: auto;
+        }
+
+        .navbar .buttons a {
+            text-decoration: none;
+            font-size: 16px;
+            color: #ddd;
+            font-weight: bold;
+            padding: 8px 15px;
+            transition: color 0.3s ease, background-color 0.3s ease;
+        }
+
+        .navbar .buttons a:hover {
+            color: white;
+            background-color: #388E3C; /* Dark Green */
+        }
+
+        /* Hero Section */
+        #news-hero {
+            position: relative;
+            height: 60vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+        }
+
+        #news-hero video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: brightness(0.3);
+            z-index: -1;
+        }
+
+        #news-hero h1 {
+            font-size: 50px;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        #news-hero p {
+            font-size: 22px;
+            margin-top: 5px;
+            font-weight: 500;
+        }
+
+        /* News Section */
+        #news-section {
+            padding: 60px 20px;
+            background-color: #1F1F1F;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        #news-section h2 {
+            font-size: 36px;
+            margin-bottom: 40px;
+            color: #388E3C;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .news-container {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .news-item {
+            background-color: #2C2C2C;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            transition: box-shadow 0.3s ease;
+        }
+
+        .news-item:hover {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .news-item img {
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .news-item h3 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #ddd;
+            font-weight: 700;
+        }
+
+        .news-item p {
+            font-size: 18px;
+            line-height: 1.6;
+            color: #bbb;
+        }
+
+        .news-item .reference {
+            font-size: 14px;
+            color: #888;
+            margin-top: 10px;
+        }
+
+        /* Footer */
+        #footer {
+            background-color: #388E3C;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            font-size: 16px;
+            margin-top: 50px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <div class="navbar">
+        <div class="logo">
+            <img src="images/logo.svg" alt="GeoAnalytical Logo">
+        </div>
+        <div class="buttons">
+            <a href="index.html">Home</a>
+            <a href="statistics.html">Statistics</a>
+            <a href="donation.html">Make a Donation</a>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <div id="news-hero">
+        <video autoplay loop muted>
+            <source src="images/new.mp4" type="video/mp4">
+        </video>
+        <h1>Latest Updates</h1>
+        <p>Stay informed with the latest developments</p>
+    </div>
+
+    <!-- News Section -->
+    <div id="news-section">
+        <h2>News Highlights</h2>
+        <div class="news-container">
+            <!-- News Item 1: Most Recent -->
+            <div class="news-item">
+                <img src="images/news1.jpg" alt="Recovery Updates">
+                <h3>Novembre 16, 2024: Séisme d'Al Haouz - 190 millions d'euros pour la reconstruction</h3>
+                <p>Le Maroc et l'Union européenne ont signé une convention de financement de 190 millions d'euros pour la reconstruction des zones touchées par le séisme dans la région d'Al Haouz.</p>
+                <div class="reference">Source: <a href="https://www.maghrebpress.com">Maghreb Press</a></div>
+            </div>
+            <!-- News Item 2 -->
+            <div class="news-item">
+                <img src="images/news2.jpg" alt="Wind Gusts in Al Haouz">
+                <h3>Septembre 27, 2023: Rafales de vent dans les zones sinistrées</h3>
+                <p>Les vents forts ont arraché de nombreuses tentes installées pour les sinistrés, perturbant ainsi les efforts de reconstruction dans plusieurs douars d'Al Haouz.</p>
+                <div class="reference">Source: <a href="https://www.lesiteinfo.com">Le Site Info</a></div>
+            </div>
+            <!-- News Item 3 -->
+            <div class="news-item">
+                <img src="images/news3.jpg" alt="Pharmacists Mobilize">
+                <h3>Septembre 09, 2023: Les pharmaciens du Maroc se mobilisent</h3>
+                <p>Les pharmaciens marocains se sont unis pour fournir des soins médicaux d'urgence et de la médication aux victimes du séisme dans la région d'Al Haouz.</p>
+                <div class="reference">Source: <a href="https://www.le360.ma">Le360</a></div>
+            </div>
+            <!-- News Item 4 -->
+            <div class="news-item">
+                <img src="images/news4.jpg" alt="Mourning After the Earthquake">
+                <h3>Septembre 11, 2023: Trois jours de deuil national après le séisme</h3>
+                <p>Le Maroc observe trois jours de deuil national après le séisme qui a frappé la région d'Al Haouz, faisant plus de 1 300 morts.</p>
+                <div class="reference">Source: <a href="https://www.h24info.ma">H24info</a></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div id="footer">
+        <p>Created by Caouthar Benguitoun & Imane Ounisl | Supervised by Pr. HAJJI</p>
+    </div>
+</body>
+</html>

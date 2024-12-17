@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <base target="_top">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>GeoNature - Haouz Earthquake 2023</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <link rel="stylesheet" href="https://unpkg.com/swiper@9/swiper-bundle.min.css">
+    <script src="https://unpkg.com/swiper@9/swiper-bundle.min.js"></script>
+
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            background-color: #121212;
+            color: #ddd;
+            font-family: Arial, sans-serif;
+        }
+
+        .leaflet-container {
+            height: 100vh;
+            width: 100%;
+        }
+
+        /* Custom Styles for Popups */
+        .swiper {
+            width: 500px;
+            height: 350px;  /* Increased height of the swiper container */
+            border-radius: 20px;  /* More rounded corners */
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6); /* Softer and larger shadow */
+            background-color: rgba(255, 255, 255, 0.9); /* Slight white background */
+        }
+
+        .swiper-slide {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s ease-in-out;  /* Smooth transition effect */
+        }
+
+        .swiper-slide img {
+            max-width: 100%;  /* Make images larger */
+            max-height: 100%;
+            object-fit: cover; /* Ensures images fill the container without distortion */
+            border-radius: 15px; /* Rounded image corners */
+            transition: transform 0.3s ease-in-out; /* Smooth scaling effect on hover */
+        }
+
+        .swiper-slide img:hover {
+            transform: scale(1.1); /* Slight zoom effect */
+        }
+
+        .swiper-pagination {
+            position: absolute;
+            bottom: 15px;
+            z-index: 10;
+            color: #fff;
+        }
+
+        .swiper-button-next,
+        .swiper-button-prev {
+            color: #fff;
+            background-color: rgba(0, 0, 0, 0.6);
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .swiper-button-next:hover,
+        .swiper-button-prev:hover {
+            background-color: rgba(0, 0, 0, 0.8);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.7);
+        }
+
+        /* Styling for Map Container */
+        #map {
+            height: 100vh;
+            width: 100%;
+        }
+
+        /* Navbar Styling */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: rgba(18, 18, 18, 0.9);
+            z-index: 1000;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            border-bottom: 1px solid #333;
+        }
+
+        .navbar .logo img {
+            height: 40px;
+            width: auto;
+        }
+
+        .navbar .buttons {
+            display: flex;
+            gap: 20px;
+        }
+
+        .navbar .buttons a {
+            text-decoration: none;
+            font-size: 16px;
+            color: #ddd;
+            font-weight: bold;
+            padding: 10px 20px;
+            border-radius: 25px;
+            transition: color 0.3s ease, background-color 0.3s ease;
+            background-color: rgba(0, 0, 0, 0.6);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+        }
+
+        .navbar .buttons a:hover {
+            color: white;
+            background-color: #388E3C; /* Dark Green */
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Custom Style for Green Pin with Black Contour */
+        .leaflet-div-icon {
+            background-color: transparent;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            border: 3px solid #000; /* Black contour */
+            background-color: #388E3C; /* Green background */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .leaflet-div-icon:hover {
+            transform: scale(1.2);  /* Slightly enlarges the marker when hovered */
+        }
+
+    </style>
+
+</head>
+<body>
+
+    <!-- Navbar -->
+    <div class="navbar">
+        <div class="logo">
+            <img src="images/logo.svg" alt="GeoNature Logo">
+        </div>
+        <div class="buttons">
+            <a href="statistics.html">Statistics</a>
+            <a href="news.html">News</a>
+            <a href="how_to_help.html">Make a Donation</a>
+            <a href="aboutus.html">About Us</a>
+            <a href="index.html">Home</a>
+        </div>
+    </div>
+
+    <!-- Map Container -->
+    <div id="map"></div>
+
+    <script>
+        const map = L.map('map').setView([31.4, -8.5], 8); // Center map around El Haouz region
+
+        const openTopoMap = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://opentopomap.org/copyright">OpenTopoMap</a> contributors',
+    maxZoom: 17
+}).addTo(map);
+
+
+
+        // Markers with associated before and after images
+        const locations = [
+            {
+                coords: [31.5, -8.6],
+                before: ['images/buildingsbefore1.png'],
+                after: ['images/buildingsafter1.png']
+            },
+            {
+                coords: [31.7, -8.7],
+                before: ['images/buildingsbefore2.jpg'],
+                after: ['images/buildingsafter2.png']
+            },
+            {
+                coords: [31.6, -8.7],
+                before: ['images/routebefore.jpeg'],
+                after: ['images/routeafter.png']
+            },
+            {
+                coords: [31.7, -8.8],
+                before: ['images/ruralbefore.jpg'],
+                after: ['images/ruralafter.png']
+            }
+        ];
+
+        // Function to create a popup with a slideshow
+        const createPopupContent = (beforeImages, afterImages) => {
+            return `
+                <div class="swiper">
+                    <div class="swiper-wrapper">
+                        ${beforeImages.map(img => `<div class="swiper-slide"><img src="${img}" style="width:100%; height:auto;"></div>`).join('')}
+                        ${afterImages.map(img => `<div class="swiper-slide"><img src="${img}" style="width:100%; height:auto;"></div>`).join('')}
+                    </div>
+                    <div class="swiper-pagination"></div>
+                    <div class="swiper-button-next"></div>
+                    <div class="swiper-button-prev"></div>
+                </div>
+            `;
+        };
+
+        // Add markers to the map with a cute custom pin
+        locations.forEach(location => {
+            const customIcon = L.divIcon({
+                className: 'leaflet-div-icon'  // Use the custom pin style
+            });
+
+            const marker = L.marker(location.coords, { icon: customIcon }).addTo(map);
+            marker.bindPopup(createPopupContent(location.before, location.after));
+        });
+// Create a custom control for the bottom-left panel
+const alHaouzInfoPanel = L.control({ position: 'bottomleft' });
+
+alHaouzInfoPanel.onAdd = function (map) {
+    const div = L.DomUtil.create('div', 'al-haouz-info-panel'); // Create a container div
+
+    // Add the panel content
+    div.innerHTML = `
+        <p><strong>Al Haouz: Before and After</strong></p>
+        <p><strong>Before:</strong> Famous for its breathtaking landscapes and vibrant culture.</p>
+        <p><strong>After:</strong> Devastated by the earthquake, leaving many in need of help.</p>
+        <p><em>Check the pictures for yourself!</em></p>
+    `;
+
+    // Apply styles to the panel
+    div.style.background = 'rgba(255, 255, 255, 0.8)'; // Low-opacity white background
+    div.style.color = 'black'; // Black text
+    div.style.padding = '10px'; // Add padding for spacing
+    div.style.borderRadius = '5px'; // Rounded corners for modern look
+    div.style.border = '1px solid #ccc'; // Subtle border
+    div.style.boxShadow = '0 2px 6px rgba(0, 0, 0, 0.2)'; // Light shadow
+    div.style.fontSize = '14px'; // Text size
+    div.style.lineHeight = '1.5'; // Line height for better readability
+    div.style.width = '220px'; // Set a fixed width
+
+    return div;
+};
+
+// Add the panel to the map
+alHaouzInfoPanel.addTo(map);
+
+        // Initialize Swiper when a popup opens
+        map.on('popupopen', () => {
+            new Swiper('.swiper', {
+                loop: true,
+                pagination: {
+                    el: '.swiper-pagination',
+                    clickable: true
+                },
+                navigation: {
+                    nextEl: '.swiper-button-next',
+                    prevEl: '.swiper-button-prev'
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>

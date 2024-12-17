@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Help - Haouz Earthquake 2023</title>
+    <style>
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #121212;
+            color: #ddd;
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: rgba(18, 18, 18, 0.9);
+            z-index: 1000;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .navbar .logo img {
+            height: 40px;
+            width: auto;
+        }
+
+        .navbar .buttons {
+            display: flex;
+            gap: 20px;
+        }
+
+        .navbar .buttons a {
+            text-decoration: none;
+            font-size: 16px;
+            color: #ddd;
+            font-weight: bold;
+            padding: 10px 20px;
+            border-radius: 25px;
+            transition: color 0.3s ease, background-color 0.3s ease;
+        }
+
+        .navbar .buttons a:hover {
+            color: white;
+            background-color: #388E3C; /* Dark Green */
+        }
+
+        /* How to Help Section */
+        #help-section {
+            padding: 80px 40px 40px;
+            text-align: center;
+            color: #ddd;
+        }
+
+        #help-section h2 {
+            font-size: 36px;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+
+        .help-options {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .help-option {
+            background-color: #222;
+            border-radius: 10px;
+            padding: 20px;
+            width: 300px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .help-option:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
+        }
+
+        .help-option img {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }
+
+        .help-option h3 {
+            font-size: 24px;
+            margin-top: 15px;
+            color: #8E7F70;
+        }
+
+        .help-option p {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        .help-option a {
+            color: #388E3C;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .help-option a:hover {
+            text-decoration: underline;
+        }
+
+        form {
+            margin-top: 30px;
+        }
+
+        form input, form button {
+            padding: 10px;
+            margin: 10px;
+            border-radius: 5px;
+            border: 1px solid #888;
+            width: 100%;
+            max-width: 300px;
+            background-color: #222;
+            color: #ddd;
+        }
+
+        form button {
+            background-color: #388E3C;
+            color: white;
+            font-weight: bold;
+        }
+
+        form button:hover {
+            background-color: #2e7d32;
+        }
+
+        /* Footer */
+        #footer {
+            background-color: #388E3C;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <div class="navbar">
+        <div class="logo">
+            <img src="images/logo.svg" alt="GeoAnalytical Logo">
+        </div>
+        <div class="buttons">
+            <a href="index.html">Home</a>
+            <a href="news.html">News</a>
+            <a href="statistics.html">Statistics</a>
+        </div>
+    </div>
+
+    <!-- How to Help Section -->
+    <div id="help-section">
+        <h2>How to Help</h2>
+        <p>Make a difference by volunteering, spreading awareness, or donating.</p>
+
+        <div class="help-options">
+            <div class="help-option">
+                <img src="images/vol.jpg" alt="Volunteer">
+                <h3>1. Volunteer</h3>
+                <p>Join our team to assist with reconstruction, provide medical aid, or support relief efforts. <a href="volunteer.html">Sign up here</a>.</p>
+            </div>
+
+            <div class="help-option">
+                <img src="images/sp.png" alt="Spread Awareness">
+                <h3>2. Spread Awareness</h3>
+                <p>Share information about the El Haouz earthquake on social media to raise awareness and encourage others to help.</p>
+            </div>
+
+            <div class="help-option">
+                <img src="images/donate.jpg" alt="Donate">
+                <h3>3. Donate</h3>
+                <form>
+                    <input type="text" placeholder="Your Name" required>
+                    <input type="email" placeholder="Your Email" required>
+                    <input type="number" placeholder="Donation Amount" required>
+                    <button type="submit">Donate Now</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div id="footer">
+        <p>Created by Caouthar Benguitoun & Imane Ounisl | Supervised by Pr. HAJJI</p>
+    </div>
+</body>
+</html>

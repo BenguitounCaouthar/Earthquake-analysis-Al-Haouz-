@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Statistics - Haouz Earthquake 2023</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Arial', sans-serif; }
+        body { background-color: #121212; color: #ddd; overflow-x: hidden; font-size: 16px; }
+        .navbar { position: fixed; top: 0; left: 0; width: 100%; padding: 20px 50px; display: flex; justify-content: space-between; align-items: center; background-color: rgba(18, 18, 18, 0.9); color: #ddd; z-index: 100; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); }
+        .navbar .logo img { height: 40px; width: auto; }
+        .navbar .buttons a { text-decoration: none; font-size: 16px; color: #ddd; font-weight: bold; padding: 8px 15px; transition: color 0.3s ease, background-color 0.3s ease; }
+        .navbar .buttons a:hover { color: white; background-color: #388E3C; }
+        #statistics-hero { position: relative; height: 60vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; color: white; }
+        #statistics-hero::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: url('images/statistics-bg.jpg'); background-size: cover; background-position: center; filter: brightness(0.3); z-index: -1; }
+        #statistics-hero h1 { font-size: 50px; margin-bottom: 15px; font-weight: 700; }
+        #statistics-hero p { font-size: 22px; margin-top: 5px; font-weight: 500; }
+        .toggle-buttons { text-align: center; margin: 20px 0; }
+        .toggle-buttons button { background-color: #388E3C; color: white; border: none; padding: 10px 20px; font-size: 16px; margin: 0 10px; border-radius: 5px; cursor: pointer; transition: background-color 0.3s ease; }
+        .toggle-buttons button:hover { background-color: #2C6B2C; }
+        .analysis-options { display: none; text-align: center; margin-top: 20px; }
+        .analysis-options button { background-color: #388E3C; color: white; border: none; padding: 10px 20px; font-size: 16px; margin: 10px; border-radius: 5px; cursor: pointer; transition: background-color 0.3s ease; }
+        .analysis-options button:hover { background-color: #2C6B2C; }
+        #statistics-section { padding: 60px 20px; background-color: #1F1F1F; max-width: 1200px; margin: 0 auto; }
+        #map-options { display: none; text-align: center; margin-top: 20px; }
+        .map-option-button { background-color: #388E3C; color: white; border: none; padding: 10px 20px; font-size: 16px; margin: 10px; border-radius: 5px; cursor: pointer; transition: background-color 0.3s ease; }
+        .map-option-button:hover { background-color: #2C6B2C; }
+        #footer { background-color: #388E3C; color: white; text-align: center; padding: 20px; font-size: 16px; margin-top: 50px; }
+        .go-back-button { display: none; background-color: #388E3C; color: white; padding: 10px 20px; border: none; cursor: pointer; border-radius: 5px; margin-top: 20px; }
+        .go-back-button:hover { background-color: #2C6B2C; }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div class="logo"><img src="images/logo.svg" alt="GeoAnalytical Logo"></div>
+        <div class="buttons">
+            <a href="index.html">Home</a>
+            <a href="news.html">News</a>
+            <a href="donation.html">Make a Donation</a>
+        </div>
+    </div>
+
+    <div id="statistics-hero">
+        <h1>Statistics Overview</h1>
+        <p>Explore geospatial data and analysis of the Haouz earthquake</p>
+    </div>
+
+    <div class="toggle-buttons">
+        <button onclick="showView('map')">Visualize in Map</button>
+        <button onclick="showView('analysis')">View Analysis</button>
+    </div>
+
+    <div class="analysis-options" id="analysis-options">
+        <button onclick="showGraph('infrastructure')">Infrastructure</button>
+        <button onclick="showGraph('population')">Population</button>
+        <button onclick="showGraph('damage')">Damage</button>
+    </div>
+
+    <div id="statistics-section">
+        <div id="map-options">
+            <a href="overall.html" class="map-option-button">Overall</a>
+            <a href="infra.html" class="map-option-button">Infrastructure</a>
+            <a href="camp.html" class="map-option-button">Camps</a>
+        </div>
+        <canvas id="graph" style="display:none;"></canvas>
+        <button class="go-back-button" onclick="goBack()">Go Back</button>
+    </div>
+
+    <div id="footer">
+        <p>Created by Caouthar Benguitoun & Imane Ounisl | Supervised by Pr. HAJJI</p>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <script>
+        let currentChart = null;
+
+        const statistics = {
+            infrastructure: {
+                buildings: 30,
+                roads: 50,
+                bridges: 10
+            },
+            population: {
+                affected: 50000,
+                displaced: 5000,
+                injured: 1200
+            },
+            damage: {
+                cost: 50000000,
+                responseTeams: 10
+            }
+        };
+
+        function showView(view) {
+            if (view === 'map') {
+                document.getElementById('map-options').style.display = 'block';  // Show map options
+                document.getElementById('graph').style.display = 'none';
+                document.getElementById('analysis-options').style.display = 'none';
+                document.querySelector('.go-back-button').style.display = 'block';
+            } else if (view === 'analysis') {
+                document.getElementById('map-options').style.display = 'none';  // Hide map options
+                document.getElementById('graph').style.display = 'none';
+                document.getElementById('analysis-options').style.display = 'block';
+                document.querySelector('.go-back-button').style.display = 'block';
+            }
+        }
+
+        function showGraph(type) {
+            document.getElementById('map-options').style.display = 'none';  // Hide map options
+            document.getElementById('analysis-options').style.display = 'none';
+            document.getElementById('graph').style.display = 'block';
+
+            const ctx = document.getElementById('graph').getContext('2d');
+            let data = {};
+
+            if (type === 'infrastructure') {
+                data = {
+                    labels: ['Buildings Damaged', 'Roads Damaged (km)', 'Bridges Collapsed'],
+                    datasets: [{
+                        label: 'Infrastructure Damage',
+                        data: [statistics.infrastructure.buildings, statistics.infrastructure.roads, statistics.infrastructure.bridges],
+                        backgroundColor: 'rgba(56, 142, 108, 0.6)',
+                        borderColor: '#388E3C',
+                        borderWidth: 1
+                    }]
+                };
+            } else if (type === 'population') {
+                data = {
+                    labels: ['Affected', 'Displaced', 'Injured'],
+                    datasets: [{
+                        label: 'Population Impact',
+                        data: [statistics.population.affected, statistics.population.displaced, statistics.population.injured],
+                        backgroundColor: 'rgba(255, 87, 34, 0.6)',
+                        borderColor: '#FF5722',
+                        borderWidth: 1
+                    }]
+                };
+            } else if (type === 'damage') {
+                data = {
+                    labels: ['Cost of Damage (USD)', 'Teams Deployed'],
+                    datasets: [{
+                        label: 'Damage Overview',
+                        data: [statistics.damage.cost / 1000000, statistics.damage.responseTeams],
+                        backgroundColor: 'rgba(33, 150, 243, 0.6)',
+                        borderColor: '#2196F3',
+                        borderWidth: 1
+                    }]
+                };
+            }
+
+            if (currentChart) {
+                currentChart.destroy();
+            }
+
+            currentChart = new Chart(ctx, {
+                type: 'bar',
+                data: data,
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: { grid: { color: 'rgba(255, 255, 255, 0.1)' }, ticks: { font: { size: 14 }, color: '#ddd' } },
+                        y: { beginAtZero: true, grid: { color: 'rgba(255, 255, 255, 0.1)' }, ticks: { font: { size: 14 }, color: '#ddd' } }
+                    }
+                }
+            });
+        }
+
+        function goBack() {
+            document.getElementById('map-options').style.display = 'none';  // Hide map options
+            document.getElementById('graph').style.display = 'none';
+            document.getElementById('analysis-options').style.display = 'none';
+            document.querySelector('.go-back-button').style.display = 'none';
+        }
+    </script>
+</body>
+</html>

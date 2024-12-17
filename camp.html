@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Camp Analysis - Haouz Earthquake 2023</title>
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+    
+    <!-- Page Styling -->
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Arial', sans-serif; }
+        body, html { width: 100%; height: 100%; overflow: hidden; background-color: #121212; color: #ddd; }
+
+        /* Navbar Styling */
+        nav {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        nav a {
+            color: #ddd;
+            text-decoration: none;
+            padding: 8px 15px;
+            margin: 0 5px;
+            font-size: 16px;
+        }
+
+        nav a:hover {
+            background-color: #444;
+            border-radius: 4px;
+        }
+
+        /* Map Container */
+        #map {
+            width: 100%;
+            height: 100vh; /* Full-page height */
+            position: relative;
+            z-index: 1;
+        }
+        /* Info Panel */
+        #info-panel {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            width: 300px;
+            max-height: 300px;
+            background: rgba(30, 30, 30, 0.9);
+            border: 1px solid #444;
+            border-radius: 8px;
+            padding: 15px;
+            overflow-y: auto;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            color: #ddd;
+        }
+
+        #info-panel h3 {
+            color: #3f8535; /* Gold title */
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        #info-panel p {
+            font-size: 14px;
+            line-height: 1.6;
+            margin: 5px 0;
+        }
+
+        /* Aid Info Panel */
+        #aid-info-panel {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            width: 300px;
+            max-height: 300px;
+            background: rgba(30, 30, 30, 0.9);
+            border: 1px solid #444;
+            border-radius: 8px;
+            padding: 15px;
+            overflow-y: auto;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            color: #ddd;
+        }
+
+        #aid-info-panel h3 {
+            color: #3f8535; /* Gold title */
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        #aid-info-panel p {
+            font-size: 14px;
+            line-height: 1.6;
+            margin: 5px 0;
+        }
+
+        /* Legend Styling */
+        .leaflet-control-layers {
+            background: rgba(0, 0, 0, 0.7) !important;
+        }
+
+        .leaflet-control-layers-label {
+            color: #ddd;
+        }
+    </style>
+</head>
+<body>
+
+     <!-- Navbar -->
+     <nav>
+        <div>
+            <a href="statistics.html" onclick="goBack()">Go Back</a>
+            <a href="index.html">Home</a>
+            <a href="aboutus.html">About</a>
+        </div>
+        <div>Haouz Earthquake 2023</div>
+    </nav>
+
+    <!-- Map Container -->
+    <div id="map"></div>
+
+    <!-- Aid Info Panel -->
+    <div id="aid-info-panel">
+        <h3>Received Aid</h3>
+        <p><strong>Amount of aid received:</strong> 500 million MAD</p>
+        <p><strong>Contributors:</strong> Red Cross, UN, various countries</p>
+        <p><strong>Type of aid:</strong> Medical supplies, food, emergency shelters</p>
+        <p><strong>Status:</strong> Aid distribution in progress</p>
+    </div>
+
+    <!-- Info Panel -->
+    <div id="info-panel">
+        <h3>Zones Information</h3>
+        <p>Click on a zone to see details here.</p>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+    <script>
+        // Initialize the map
+        const map = L.map('map').setView([30.4759, -8.8954], 10); // Centered on Taroudant
+
+        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+    attribution: '&copy; <a href="https://www.esri.com/">Esri</a>, HERE, Garmin, FAO, NOAA, USGS, and other contributors',
+    maxZoom: 20,
+}).addTo(map);
+
+
+        // GeoJSON data for camps (points on the map)
+        const campsGeoJSON = {
+"type": "FeatureCollection",
+"name": "camps",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Taroudant" }, "geometry": { "type": "Point", "coordinates": [ -8.895370824999929, 30.47591882200004 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Taroudant" }, "geometry": { "type": "Point", "coordinates": [ -8.892235888999949, 30.471958246000042 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Taroudant" }, "geometry": { "type": "Point", "coordinates": [ -8.893600689999914, 30.47215841700006 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Taroudant" }, "geometry": { "type": "Point", "coordinates": [ -8.891042661999961, 30.471027581000044 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Taroudant" }, "geometry": { "type": "Point", "coordinates": [ -8.892778689999943, 30.473932295000054 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Taroudant" }, "geometry": { "type": "Point", "coordinates": [ -8.892587357999957, 30.47656935100008 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Taroudant" }, "geometry": { "type": "Point", "coordinates": [ -8.889780597999959, 30.475484581000046 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Taroudant" }, "geometry": { "type": "Point", "coordinates": [ -8.886556234999944, 30.460246221000034 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Taroudant" }, "geometry": { "type": "Point", "coordinates": [ -8.884915768999917, 30.467596704000073 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Taroudant" }, "geometry": { "type": "Point", "coordinates": [ -8.88495237199993, 30.47232843200004 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Taroudant" }, "geometry": { "type": "Point", "coordinates": [ -8.885399922999909, 30.471747780000044 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Taroudant" }, "geometry": { "type": "Point", "coordinates": [ -8.883081356999924, 30.468507730000056 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Taroudant" }, "geometry": { "type": "Point", "coordinates": [ -8.882046112999944, 30.466857416000039 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Taroudant" }, "geometry": { "type": "Point", "coordinates": [ -8.878401814999961, 30.477840448000052 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Taroudant" }, "geometry": { "type": "Point", "coordinates": [ -8.879097027999933, 30.464933324000071 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Taroudant" }, "geometry": { "type": "Point", "coordinates": [ -8.880017293999913, 30.464535582000053 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Taroudant" }, "geometry": { "type": "Point", "coordinates": [ -8.875568226999917, 30.486528756000041 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Taroudant" }, "geometry": { "type": "Point", "coordinates": [ -8.87667306599991, 30.485503762000064 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Taroudant" }, "geometry": { "type": "Point", "coordinates": [ -8.876488120999909, 30.476971505000051 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Taroudant" }, "geometry": { "type": "Point", "coordinates": [ -8.874357322999913, 30.468406716000061 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Taroudant" }, "geometry": { "type": "Point", "coordinates": [ -8.874357322999913, 30.472793096000089 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Taroudant" }, "geometry": { "type": "Point", "coordinates": [ -8.874534393999909, 30.47324468700009 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Taroudant" }, "geometry": { "type": "Point", "coordinates": [ -8.873765499999934, 30.478750538000043 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Taroudant" }, "geometry": { "type": "Point", "coordinates": [ -8.874647291999906, 30.480389340000045 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Taroudant" }, "geometry": { "type": "Point", "coordinates": [ -8.874093497999922, 30.483612277000077 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Taroudant" }, "geometry": { "type": "Point", "coordinates": [ -8.875102151999954, 30.48451404900004 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Taroudant" }, "geometry": { "type": "Point", "coordinates": [ -8.874232540999913, 30.486963561000039 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Taroudant" }, "geometry": { "type": "Point", "coordinates": [ -8.873740543999929, 30.490924494000069 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Taroudant" }, "geometry": { "type": "Point", "coordinates": [ -8.865295782999908, 30.47356555500005 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Taroudant" }, "geometry": { "type": "Point", "coordinates": [ -8.862653972999908, 30.478960885000049 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Taroudant" }, "geometry": { "type": "Point", "coordinates": [ -8.85920286299995, 30.474393869000039 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Taroudant" }, "geometry": { "type": "Point", "coordinates": [ -8.858477939999943, 30.473421759000075 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Taroudant" }, "geometry": { "type": "Point", "coordinates": [ -8.860214189999908, 30.473749757000064 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MOR", "field_9": "Taroudant" }, "geometry": { "type": "Point", "coordinates": [ -8.903250382999943, 30.440336028000047 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MOR", "field_9": "Lalla Aaziza" }, "geometry": { "type": "Point", "coordinates": [ -8.714368137999941, 31.106002441000044 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MOR", "field_9": "Lalla Aaziza" }, "geometry": { "type": "Point", "coordinates": [ -8.721800993999921, 31.113570440000046 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MOR", "field_9": "Lalla Aaziza" }, "geometry": { "type": "Point", "coordinates": [ -8.690104045999931, 31.083070216000067 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MOR", "field_9": "Lalla Aaziza" }, "geometry": { "type": "Point", "coordinates": [ -8.65641491699995, 31.058122351000065 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MOR", "field_9": "Lalla Aaziza" }, "geometry": { "type": "Point", "coordinates": [ -8.55112727799991, 31.058904574000053 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MOR", "field_9": "Lalla Aaziza" }, "geometry": { "type": "Point", "coordinates": [ -8.68079158799992, 31.11579301900008 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Marrakech" }, "geometry": { "type": "Point", "coordinates": [ -7.995073285999922, 31.610630566000054 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Marrakech" }, "geometry": { "type": "Point", "coordinates": [ -7.995011068999929, 31.612464260000081 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Marrakech" }, "geometry": { "type": "Point", "coordinates": [ -7.993991911999956, 31.612564125000063 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Marrakech" }, "geometry": { "type": "Point", "coordinates": [ -7.994192579999947, 31.612507361000041 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Chichaoua" }, "geometry": { "type": "Point", "coordinates": [ -8.76649997699991, 31.556601887000056 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Chichaoua" }, "geometry": { "type": "Point", "coordinates": [ -8.770700810999926, 31.543110909000063 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Chichaoua" }, "geometry": { "type": "Point", "coordinates": [ -8.766199568999923, 31.543548506000036 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Chichaoua" }, "geometry": { "type": "Point", "coordinates": [ -8.746536402999936, 31.546343025000056 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Chichaoua" }, "geometry": { "type": "Point", "coordinates": [ -8.731253641999956, 31.555702932000088 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "AitOthmane" }, "geometry": { "type": "Point", "coordinates": [ -8.903250382999943, 30.440336028000047 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "AitOthmane" }, "geometry": { "type": "Point", "coordinates": [ -8.329422088999934, 31.163154241000086 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "AitOthmane" }, "geometry": { "type": "Point", "coordinates": [ -8.327536577999922, 31.162234239000043 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "AitOthmane" }, "geometry": { "type": "Point", "coordinates": [ -8.358964706999927, 31.139358963000063 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "AitOthmane" }, "geometry": { "type": "Point", "coordinates": [ -8.379011400999957, 31.106801750000045 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "AitOthmane" }, "geometry": { "type": "Point", "coordinates": [ -8.357978226999933, 31.10772447800008 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "AitOthmane" }, "geometry": { "type": "Point", "coordinates": [ -8.397143852999932, 31.182443669000065 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "AitOthmane" }, "geometry": { "type": "Point", "coordinates": [ -8.327836149999939, 31.162905210000076 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "AitOthmane" }, "geometry": { "type": "Point", "coordinates": [ -8.370334083999921, 31.186073032000081 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "AitOthmane" }, "geometry": { "type": "Point", "coordinates": [ -8.391147795999927, 31.15272007100009 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "AitOthmane" }, "geometry": { "type": "Point", "coordinates": [ -8.358788549999929, 31.105905865000068 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "AitOthmane" }, "geometry": { "type": "Point", "coordinates": [ -8.360248138999907, 31.110791292000044 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "AitOthmane" }, "geometry": { "type": "Point", "coordinates": [ -8.358335573999909, 31.111304665000034 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "AitOthmane" }, "geometry": { "type": "Point", "coordinates": [ -8.370369629999914, 31.106288377000055 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "AitOthmane" }, "geometry": { "type": "Point", "coordinates": [ -8.380843435999907, 31.100283932000082 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "AitOthmane" }, "geometry": { "type": "Point", "coordinates": [ -8.347675301999914, 31.10164453100009 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Adebli" }, "geometry": { "type": "Point", "coordinates": [ -8.492541900999925, 30.782333992000076 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Adebli" }, "geometry": { "type": "Point", "coordinates": [ -8.526296421999916, 30.75251820200009 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Adebli" }, "geometry": { "type": "Point", "coordinates": [ -8.487542044999941, 30.633735410000043 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Adebli" }, "geometry": { "type": "Point", "coordinates": [ -8.481625060999932, 30.636859172000072 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Adebli" }, "geometry": { "type": "Point", "coordinates": [ -8.478527880999934, 30.641683557000079 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Adebli" }, "geometry": { "type": "Point", "coordinates": [ -8.479441759999929, 30.641567094000038 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Adebli" }, "geometry": { "type": "Point", "coordinates": [ -8.48006685699994, 30.635913881000079 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Adebli" }, "geometry": { "type": "Point", "coordinates": [ -8.477278435999949, 30.640045558000054 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Adebli" }, "geometry": { "type": "Point", "coordinates": [ -8.463398722999955, 30.651112651000062 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Adebli" }, "geometry": { "type": "Point", "coordinates": [ -8.48498664199991, 30.639629281000055 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Adebli" }, "geometry": { "type": "Point", "coordinates": [ -8.479973696999934, 30.64357831600006 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Adassil" }, "geometry": { "type": "Point", "coordinates": [ -8.418835452999929, 31.126089494000041 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Adassil" }, "geometry": { "type": "Point", "coordinates": [ -8.420790043999943, 31.12662183000009 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Adassil" }, "geometry": { "type": "Point", "coordinates": [ -8.421960002999924, 31.125847871000076 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Adassil" }, "geometry": { "type": "Point", "coordinates": [ -8.421713550999925, 31.126812665000045 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Adassil" }, "geometry": { "type": "Point", "coordinates": [ -8.420323939999946, 31.125690359000089 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Adassil" }, "geometry": { "type": "Point", "coordinates": [ -8.419784870999933, 31.131870788000072 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Adassil" }, "geometry": { "type": "Point", "coordinates": [ -8.418638736999924, 31.124285602000043 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Adassil" }, "geometry": { "type": "Point", "coordinates": [ -8.419169782999916, 31.123845631000052 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Adassil" }, "geometry": { "type": "Point", "coordinates": [ -8.437865597999917, 31.15601855400007 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Adassil" }, "geometry": { "type": "Point", "coordinates": [ -8.436389039999938, 31.159258811000086 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Adassil" }, "geometry": { "type": "Point", "coordinates": [ -8.448372566999922, 31.203978378000045 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Adassil" }, "geometry": { "type": "Point", "coordinates": [ -8.451449881999906, 31.205034857000044 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Adassil" }, "geometry": { "type": "Point", "coordinates": [ -8.451287611999931, 31.205241840000042 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Adassil" }, "geometry": { "type": "Point", "coordinates": [ -8.448550304999912, 31.203089103000082 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Adassil" }, "geometry": { "type": "Point", "coordinates": [ -8.452652417999957, 31.201000197000042 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Adassil" }, "geometry": { "type": "Point", "coordinates": [ -8.449235934999933, 31.190987521000068 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Adassil" }, "geometry": { "type": "Point", "coordinates": [ -8.43650806699992, 31.159622203000083 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Adassil" }, "geometry": { "type": "Point", "coordinates": [ -8.439930566999919, 31.159216973000071 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Adassil" }, "geometry": { "type": "Point", "coordinates": [ -8.439824030999944, 31.157507212000041 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Adassil" }, "geometry": { "type": "Point", "coordinates": [ -8.490876101999959, 31.119403312000088 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Adassil" }, "geometry": { "type": "Point", "coordinates": [ -8.490218978999906, 31.11850991600005 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Adassil" }, "geometry": { "type": "Point", "coordinates": [ -8.490154727999936, 31.118461098000068 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Adassil" }, "geometry": { "type": "Point", "coordinates": [ -8.48967295999995, 31.119630516000086 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Adassil" }, "geometry": { "type": "Point", "coordinates": [ -8.490436372999909, 31.117000782000048 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Adassil" }, "geometry": { "type": "Point", "coordinates": [ -8.534674124999924, 31.061467826000069 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Adassil" }, "geometry": { "type": "Point", "coordinates": [ -8.534225593999906, 31.063300644000037 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Adassil" }, "geometry": { "type": "Point", "coordinates": [ -8.501972835999936, 31.109384721000083 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Adassil" }, "geometry": { "type": "Point", "coordinates": [ -8.501806913999928, 31.109316182000043 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Adassil" }, "geometry": { "type": "Point", "coordinates": [ -8.500646381999957, 31.109738474000039 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Adassil" }, "geometry": { "type": "Point", "coordinates": [ -8.501759117999939, 31.10929417300008 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Adassil" }, "geometry": { "type": "Point", "coordinates": [ -8.50046277499996, 31.109172178000051 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Adassil" }, "geometry": { "type": "Point", "coordinates": [ -8.499290981999934, 31.109741848000056 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Adassil" }, "geometry": { "type": "Point", "coordinates": [ -8.498449713999946, 31.109538377000035 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Adassil" }, "geometry": { "type": "Point", "coordinates": [ -8.49779660899992, 31.10991140200008 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Adassil" }, "geometry": { "type": "Point", "coordinates": [ -8.49615310899992, 31.111506925000072 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Adassil" }, "geometry": { "type": "Point", "coordinates": [ -8.496035880999955, 31.111503799000047 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Adassil" }, "geometry": { "type": "Point", "coordinates": [ -8.496142043999953, 31.111467356000048 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Adassil" }, "geometry": { "type": "Point", "coordinates": [ -8.496272486999942, 31.111956726000074 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Adassil" }, "geometry": { "type": "Point", "coordinates": [ -8.492284407999932, 31.111017674000038 ] } },
+{ "type": "Feature", "properties": { "Site_ID": 30, "AgencyID": false, "SiteName": null, "Lat": false, "Lon": false, "Notes": null, "EventCode": "EQ20230909MAR", "field_9": "Adassil" }, "geometry": { "type": "Point", "coordinates": [ -8.492197437999948, 31.110836919000064 ] } }
+]
+}
+;
+
+        // GeoJSON data for cities (polygons)
+        const citiesGeoJSONData ={
+"type": "FeatureCollection",
+"name": "zone",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "Site_ID": 1, "AgencyID": 0, "SiteName": "chichaoua", "Notes": null, "Area_m2": 120221940.34700002, "Area_ha": 12022.1940347, "EventCode": "EQ20230909MAR", "SHAPE_Leng": 0.44459958981999997, "SHAPE_Area": 0.01141637578, "number_of_camps": 5, "people_helped": 250 }, "geometry": { "type": "MultiPolygon", "coordinates": [ [ [ [ -8.811946291985643, 31.461474947049695 ], [ -8.832451895854415, 31.575541409863046 ], [ -8.691023113928955, 31.576364680997749 ], [ -8.746813096013435, 31.468086968102575 ], [ -8.811946291985643, 31.461474947049695 ] ] ] ] } },
+{ "type": "Feature", "properties": { "Site_ID": 2, "AgencyID": 0, "SiteName": "taroudant", "Notes": null, "Area_m2": 24280545.190499999, "Area_ha": 2428.0545190500002, "EventCode": "EQ20230909MAR", "SHAPE_Leng": 0.42108003285000001, "SHAPE_Area": 0.0097117601, "number_of_camps": 4, "people_helped": 137 }, "geometry": { "type": "MultiPolygon", "coordinates": [ [ [ [ -8.944505524907861, 30.497998471254107 ], [ -8.944505590907964, 30.497882345254236 ], [ -8.943261654908644, 30.497882345255416 ], [ -8.941013348909831, 30.497882345257551 ], [ -8.938765043911063, 30.497882345259701 ], [ -8.938765043911102, 30.497841474259797 ], [ -8.88255741694141, 30.497500881313908 ], [ -8.882557416941026, 30.497882345313389 ], [ -8.880309110942212, 30.497882345315531 ], [ -8.878060805943385, 30.497882345317684 ], [ -8.875812500944617, 30.49788234531982 ], [ -8.873564195945791, 30.497882345321969 ], [ -8.871315890946967, 30.497882345324133 ], [ -8.869067585948196, 30.497882345326282 ], [ -8.866819280949372, 30.497882345328421 ], [ -8.864570975950603, 30.497882345330577 ], [ -8.864570975951095, 30.497391891331215 ], [ -8.824101483972896, 30.49714666437022 ], [ -8.824101483972155, 30.497882345369241 ], [ -8.821853177973342, 30.497882345371384 ], [ -8.819604872974514, 30.497882345373554 ], [ -8.817356567975743, 30.497882345375665 ], [ -8.81601347497646, 30.497882345376983 ], [ -8.816013467976475, 30.497885956376987 ], [ -8.815103155976928, 30.497884668377907 ], [ -8.815104646977696, 30.497096375378863 ], [ -8.815108262977711, 30.497096380378888 ], [ -8.815108262979644, 30.495184379381424 ], [ -8.815108262982369, 30.492486413384892 ], [ -8.815108262985087, 30.489788447388438 ], [ -8.81510826298781, 30.487090481391956 ], [ -8.815108262990526, 30.484392515395495 ], [ -8.815108262993251, 30.481694548399012 ], [ -8.815108262995969, 30.478996582402555 ], [ -8.815369838995844, 30.478996582402328 ], [ -8.813927526037396, 30.438527090456322 ], [ -8.812859958037967, 30.438527090457338 ], [ -8.812859958040683, 30.435829124460835 ], [ -8.812859958043397, 30.433131158464366 ], [ -8.812859958046111, 30.430433192467824 ], [ -8.812859958048824, 30.427735226471349 ], [ -8.813542909048451, 30.427735226470705 ], [ -8.813538813048572, 30.427620285470852 ], [ -8.869067586021229, 30.425398231420676 ], [ -8.869067586021593, 30.425037260421156 ], [ -8.871315891020361, 30.425037260418993 ], [ -8.873564196019188, 30.425037260416843 ], [ -8.875812501018013, 30.42503726041468 ], [ -8.875812501020725, 30.422339293418169 ], [ -8.878060806019494, 30.42233929341602 ], [ -8.880309111018322, 30.422339293413881 ], [ -8.882557417017139, 30.422339293411746 ], [ -8.884805722015907, 30.422339293409575 ], [ -8.887054027014734, 30.422339293407475 ], [ -8.889302332013498, 30.422339293405308 ], [ -8.891550637012324, 30.42233929340313 ], [ -8.89379894201115, 30.422339293401013 ], [ -8.896047247009921, 30.422339293398846 ], [ -8.898295552008747, 30.422339293396714 ], [ -8.900543857007513, 30.422339293394568 ], [ -8.90279216300633, 30.422339293392412 ], [ -8.905040468005152, 30.422339293390269 ], [ -8.90728877300392, 30.42233929338812 ], [ -8.909537078002746, 30.422339293385942 ], [ -8.911785383001515, 30.422339293383832 ], [ -8.914033688000337, 30.422339293381683 ], [ -8.916281992999167, 30.422339293379533 ], [ -8.918530297997934, 30.422339293377394 ], [ -8.918530297996845, 30.423418918376036 ], [ -8.938765043986907, 30.422609199357755 ], [ -8.938765043987177, 30.422339293358089 ], [ -8.941013348985946, 30.422339293355925 ], [ -8.943261654984759, 30.422339293353808 ], [ -8.945509959983584, 30.422339293351659 ], [ -8.945509959980868, 30.425037260348162 ], [ -8.945509959978153, 30.427735226344687 ], [ -8.945509959975441, 30.430433192341155 ], [ -8.945509959972725, 30.433131158337673 ], [ -8.945509959970009, 30.435829124334159 ], [ -8.945509959967296, 30.438527090330684 ], [ -8.945509959964577, 30.441225056327159 ], [ -8.945509959961864, 30.443923023323624 ], [ -8.945509959959146, 30.446620989320117 ], [ -8.945509959956429, 30.449318955316649 ], [ -8.947758264955199, 30.449318955314517 ], [ -8.94775826495248, 30.45201692131096 ], [ -8.947758264949764, 30.454714887307478 ], [ -8.947758264947044, 30.457412853303914 ], [ -8.947758264944328, 30.460110819300457 ], [ -8.947758264941609, 30.462808786296961 ], [ -8.947758264938891, 30.465506752293404 ], [ -8.947758264936169, 30.468204718289922 ], [ -8.947758264933451, 30.470902684286397 ], [ -8.947758264930732, 30.47360065028289 ], [ -8.947758264928012, 30.47629861627933 ], [ -8.947758264925291, 30.478996582275855 ], [ -8.94775826492257, 30.481694548272259 ], [ -8.94775826491985, 30.484392515268787 ], [ -8.947758264917129, 30.487090481265223 ], [ -8.947758264914405, 30.489788447261731 ], [ -8.947758264911684, 30.492486413258177 ], [ -8.947758264908961, 30.495184379254678 ], [ -8.947758264906239, 30.497882345251114 ], [ -8.947756823906246, 30.497882345251146 ], [ -8.947756760906165, 30.497999814251017 ], [ -8.944505524907861, 30.497998471254107 ] ] ] ] } },
+{ "type": "Feature", "properties": { "Site_ID": 3, "AgencyID": 0, "SiteName": "adassil", "Notes": null, "Area_m2": 161303205.57100001, "Area_ha": 16130.3205571, "EventCode": "EQ20230909MAR", "SHAPE_Leng": 0.50982543845999995, "SHAPE_Area": 0.0149864823, "number_of_camps": 11, "people_helped": 785}, "geometry": { "type": "MultiPolygon", "coordinates": [ [ [ [ -8.404465878579416, 31.100302281956687 ], [ -8.462168161611022, 31.040085905985009 ], [ -8.522390853575196, 31.043769325922128 ], [ -8.557819415549256, 31.050700404878423 ], [ -8.517383978516825, 31.102837820844528 ], [ -8.51255839220495, 31.129936410747231 ], [ -8.493604905430045, 31.198566876732777 ], [ -8.45472230763302, 31.205938552419116 ], [ -8.445242423286436, 31.205570401580328 ], [ -8.429629496464464, 31.198180144794811 ], [ -8.404465878579416, 31.100302281956687 ] ] ] ] } },
+{ "type": "Feature", "properties": { "Site_ID": 4, "AgencyID": 0, "SiteName": "adebli", "Notes": null, "Area_m2": 186.93052921399999, "Area_ha": 20156.556336, "EventCode": "EQ20230909MAR", "SHAPE_Leng": 0.81704140244000001, "SHAPE_Area": 0.03406534249, "number_of_camps": 16, "people_helped": 600}, "geometry": { "type": "MultiPolygon", "coordinates": [ [ [ [ -8.406843461923023, 30.764799655414823 ], [ -8.441635431047533, 30.624255049569133 ], [ -8.555226021967236, 30.643959540434114 ], [ -8.518988219829083, 30.798505793261636 ], [ -8.4879989367105, 30.930254191111874 ], [ -8.372090170798185, 30.904754263258219 ], [ -8.406843461923023, 30.764799655414823 ] ] ] ] } },
+{ "type": "Feature", "properties": { "Site_ID": 5, "AgencyID": 0, "SiteName": "AitOthmane", "Notes": null, "Area_m2": 172800546.88800001, "Area_ha": 17280.054688799999, "EventCode": "EQ20230909MAR", "SHAPE_Leng": 0.56617407435, "SHAPE_Area": 0.01634050358, "number_of_camps": 6, "people_helped": 300 }, "geometry": { "type": "MultiPolygon", "coordinates": [ [ [ [ -8.297908560545416, 31.187571651936501 ], [ -8.341953891682934, 31.032253905111489 ], [ -8.44858995660478, 31.053117482979925 ], [ -8.404465878579416, 31.100302281956576 ], [ -8.422455839497259, 31.170277074840993 ], [ -8.411499151459834, 31.211912491792749 ], [ -8.297908560545416, 31.187571651936501 ] ] ] ] } },
+{ "type": "Feature", "properties": { "Site_ID": 6, "AgencyID": 0, "SiteName": "Marrakesh", "Notes": null, "Area_m2": 52.099501069200002, "Area_ha": 5209.9501069199996, "EventCode": "EQ20230909MAR", "SHAPE_Leng": 0.56504401363000001, "SHAPE_Area": 0.00495310084, "number_of_camps": 34, "people_helped": 2000 }, "geometry": { "type": "MultiPolygon", "coordinates": [ [ [ [ -7.971817702265318, 31.619306754627864 ], [ -7.968566037276291, 31.610564144643888 ], [ -7.967927574276472, 31.610738040644293 ], [ -7.966110295280959, 31.607384059650926 ], [ -7.961317644281487, 31.60927739565285 ], [ -7.95853024128158, 31.610571150653612 ], [ -7.957689470281533, 31.611076519653686 ], [ -7.956903217285219, 31.607980586659018 ], [ -7.956769002286453, 31.606879310660702 ], [ -7.954934455287898, 31.606445260663175 ], [ -7.95349615529333, 31.602008334671062 ], [ -7.951350593295606, 31.600916548674785 ], [ -7.950455869296777, 31.600283354676602 ], [ -7.949158284300543, 31.597339643682208 ], [ -7.943531986309425, 31.591767106695805 ], [ -7.945454841309649, 31.590568906695744 ], [ -7.966874620303096, 31.586090901681569 ], [ -7.978548454258834, 31.622079241617268 ], [ -7.974598095259064, 31.623849700618511 ], [ -7.970771543262266, 31.622714287623804 ], [ -7.971022610263666, 31.621285559625743 ], [ -7.971817702265318, 31.619306754627864 ] ] ], [ [ [ -7.999607435231527, 31.637360199574346 ], [ -7.999838430238086, 31.631029385583467 ], [ -8.000446612238571, 31.630278821583982 ], [ -7.99964388624025, 31.629131464586411 ], [ -8.002376910240072, 31.627886651585655 ], [ -8.002389712240085, 31.627880820585659 ], [ -8.00239810024012, 31.627870468585638 ], [ -7.996438055254663, 31.617110649607312 ], [ -7.991189090256408, 31.618064907610954 ], [ -7.989728685264504, 31.61115467062254 ], [ -7.989458630264799, 31.611023209623049 ], [ -7.989443459264842, 31.610961386623146 ], [ -7.987262203276813, 31.600758945640305 ], [ -7.985214916276677, 31.601877027640633 ], [ -7.983595364289981, 31.590135081659469 ], [ -7.981415217298195, 31.583409438671474 ], [ -7.983454503297617, 31.582944015670179 ], [ -7.98192770330364, 31.578041543678875 ], [ -7.990724965284855, 31.59139023965071 ], [ -8.004856476285376, 31.583836139648181 ], [ -8.007426489276863, 31.590576897635728 ], [ -8.012883324282694, 31.582345207642664 ], [ -8.018033342277162, 31.584995129633747 ], [ -8.015063495273251, 31.59020916862897 ], [ -8.011759256272541, 31.592547641628659 ], [ -8.01680747326747, 31.594786556620516 ], [ -8.019998420260418, 31.599866607609957 ], [ -8.02686195526114, 31.595728825609406 ], [ -8.032354234245073, 31.608184324585739 ], [ -8.034554701238651, 31.613173618576248 ], [ -8.028808760238633, 31.616080691577547 ], [ -8.028061502240272, 31.614859762580064 ], [ -8.028061528240281, 31.614859914580034 ], [ -8.01950695624077, 31.618693960582686 ], [ -8.023958754231638, 31.625088449568928 ], [ -8.025909356231681, 31.624094113568496 ], [ -8.028511826228895, 31.625426746564003 ], [ -8.027616220226328, 31.628270021560716 ], [ -8.029797344223409, 31.629939667556105 ], [ -8.029356807219509, 31.633869444550729 ], [ -8.025488772221125, 31.634238990553914 ], [ -8.022102548224094, 31.633130064558848 ], [ -8.019157605224301, 31.634418512559751 ], [ -8.020888500220838, 31.63680499755456 ], [ -8.01818868122076, 31.638238291555069 ], [ -8.016442271222758, 31.637217245558272 ], [ -8.020197041217894, 31.639933358550596 ], [ -8.041383198203, 31.643400198525047 ], [ -8.03017186217401, 31.676370855486979 ], [ -8.007059203181207, 31.681122525502268 ], [ -7.991831776185664, 31.684503240511951 ], [ -7.971032051208501, 31.673332641548683 ], [ -7.954941366233884, 31.657420653587835 ], [ -7.954842611244196, 31.647781338602183 ], [ -7.975207354234228, 31.64698632758369 ], [ -7.994910090226302, 31.644629157568151 ], [ -7.999607435231527, 31.637360199574346 ] ] ] ] } },
+{ "type": "Feature", "properties": { "Site_ID": 7, "AgencyID": 0, "SiteName": "LallaAaziza", "Notes": null, "Area_m2": 381503523.85500002, "Area_ha": 38184.348599500001, "EventCode": "EQ20230909MAR", "SHAPE_Leng": 0.94602762160999998, "SHAPE_Area": 0.03609205286, "number_of_camps": 15, "people_helped": 984 }, "geometry": { "type": "MultiPolygon", "coordinates": [ [ [ [ -8.726663632368906, 31.13814248259397 ], [ -8.720056307372436, 31.13812817460034 ], [ -8.493604905430104, 31.198566876732666 ], [ -8.51240346549047, 31.130806147810038 ], [ -8.517383978516825, 31.102837820844474 ], [ -8.557819415549256, 31.050700404878373 ], [ -8.522390853575258, 31.043769325922018 ], [ -8.462168161611022, 31.040085905985009 ], [ -8.464566874615631, 31.03437766899064 ], [ -8.719552153551774, 30.964870534842063 ], [ -8.726663632368906, 31.13814248259397 ] ] ] ] } }
+]
+}
+;
+
+L.geoJSON(campsGeoJSON, {
+    pointToLayer: function (feature, latlng) {
+        // Define a triangle as a polygon at each point
+        const size = 0.002; // Triangle size (adjust for scale)
+        return L.polygon([
+            [latlng.lat + size, latlng.lng], 
+            [latlng.lat - size, latlng.lng - size], 
+            [latlng.lat - size, latlng.lng + size]
+        ], {
+            color: 'black',
+            fillColor: 'green',
+            fillOpacity: 0.8
+        });
+    },
+    onEachFeature: function (feature, layer) {
+        layer.bindPopup("<b>Camp:</b> " + feature.properties.field_9);
+    }
+}).addTo(map);
+// Define the triangle legend as an HTML block
+const legend = L.control({ position: 'bottomleft' }); // Position: bottom-left corner
+
+legend.onAdd = function (map) {
+    const div = L.DomUtil.create('div', 'info legend'); // Create a container div for the legend
+
+    // Add the legend content (a green triangle with black contour and text)
+    div.innerHTML = `
+        <svg width="20" height="20" viewBox="0 0 100 100" style="vertical-align: middle;">
+            <polygon points="50,0 0,100 100,100" style="fill: green; stroke: black; stroke-width: 5;" />
+        </svg>
+        <span>Camp</span>
+    `;
+    div.style.background = 'green'; // Optional: Add background for better visibility
+    div.style.padding = '5px'; // Add some padding
+    div.style.border = '1px solid black'; // Optional: Add a border
+    div.style.borderRadius = '5px'; // Optional: Rounded corners
+    return div;
+};
+// Create a custom control for the top-right panel
+const infoPanel = L.control({ position: 'topleft' }); // Position: top-right corner
+
+infoPanel.onAdd = function (map) {
+    const div = L.DomUtil.create('div', 'info-panel'); // Create a container div for the panel
+
+    // Add the message
+    div.innerHTML = `<span>Click on zone to visualize info</span>`;
+
+    // Add styles to the panel
+    div.style.background = 'green'; // Green background
+    div.style.color = 'black'; // Black text
+    div.style.padding = '10px'; // Padding for spacing
+    div.style.borderRadius = '5px'; // Optional: Rounded corners
+    div.style.fontWeight = 'bold'; // Bold text for emphasis
+    div.style.fontSize = '14px'; // Adjust font size as needed
+    div.style.boxShadow = '0 2px 6px rgba(0, 0, 0, 0.2)'; // Optional: Shadow for better visibility
+
+    return div;
+};
+
+// Add the panel to the map
+infoPanel.addTo(map);
+
+// Add the legend to the map
+legend.addTo(map);
+
+        // Adding GeoJSON data for cities (zones) to the map
+        L.geoJSON(citiesGeoJSONData, {
+            onEachFeature: function (feature, layer) {
+                layer.bindPopup("<b>Zone:</b> " + feature.properties.SiteName + "<br><b>Area:</b> " + feature.properties.Area_ha + " ha");
+
+                // Update the info panel with details on zone click
+                layer.on('click', function () {
+                    document.getElementById('info-panel').innerHTML = `
+                        <h3>${feature.properties.SiteName} Information</h3>
+                        <p><strong>Area:</strong> ${feature.properties.Area_ha} ha</p>
+                        <p><strong>Number of camps:</strong> ${feature.properties.number_of_camps}</p>
+                        <p><strong>People helped:</strong> ${feature.properties.people_helped}</p>
+                    `;
+                });
+            }
+        }).addTo(map);
+    </script>
+</body>
+</html>
